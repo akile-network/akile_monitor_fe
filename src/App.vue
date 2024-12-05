@@ -624,7 +624,7 @@ a {
     .cpu {
       display: inline-block;
       vertical-align: top;
-      width: 120px;
+      width: 110px;
     }
 
     .mem {
@@ -636,19 +636,25 @@ a {
     .average {
       display: inline-block;
       vertical-align: top;
-      width: 200px;
+      width: 150px;
     }
 
     .network {
       display: inline-block;
       vertical-align: top;
-      width: 200px;
+      width: 160px;
     }
 
     .uptime {
       display: inline-block;
       vertical-align: middle;
-      width: 200px;
+      width: 170px;
+    }
+
+    .expire {
+      display: inline-block;
+      vertical-align: middle;
+      width: 150px;
     }
 
     .detail {
