@@ -207,6 +207,14 @@ const handleClose = () => {
   deleteVisible.value = false
 }
 
+// 计算剩余天数的函数
+const calculateRemainingDays = (expireTime) => {
+  if (!expireTime) return null
+  const expireDate = new Date(expireTime)
+  const today = new Date()
+  const diffTime = expireDate - today
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+}
 
 </script>
 
@@ -274,6 +282,10 @@ const handleClose = () => {
           <div class="monitor-item-title">上报时间</div>
           <div class="monitor-item-value">{{formatTimeStamp(item.TimeStamp)}}</div>
         </div>
+        <div class="expire" v-if="item.Host.ExpireTime">
+          <div class="monitor-item-title">剩余时间</div>
+          <div class="monitor-item-value">{{calculateRemainingDays(item.Host.ExpireTime)}}天</div>
+        </div>
         <div class="detail" v-if="selectHost === item.Host.Name">
           <a-row>
             <a-col :span="10" :xs="24" :sm="24" :md="10" :lg="10" :sl="10">
@@ -336,6 +348,10 @@ const handleClose = () => {
                 <div class="detail-item">
                   <div class="name">上报时间</div>
                   <div class="value">{{formatTimeStamp(item.TimeStamp)}}</div>
+                </div>
+                <div class="detail-item" v-if="item.Host.ExpireTime">
+                  <div class="name">剩余时间</div>
+                  <div class="value">{{calculateRemainingDays(item.Host.ExpireTime)}}天</div>
                 </div>
               </div>
             </a-col>
@@ -590,19 +606,25 @@ a {
     .average {
       display: inline-block;
       vertical-align: top;
-      width: 200px;
+      width: 180px;
     }
 
     .network {
       display: inline-block;
       vertical-align: top;
-      width: 200px;
+      width: 180px;
     }
 
     .uptime {
       display: inline-block;
       vertical-align: middle;
-      width: 200px;
+      width: 180px;
+    }
+
+    .expire {
+      display: inline-block;
+      vertical-align: middle;
+      width: 150px;
     }
 
     .detail {
