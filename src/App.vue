@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, provide, ref} from "vue";
 import moment from 'moment'
 import CPU from "@/components/CPU.vue";
 import Mem from "@/components/Mem.vue";
@@ -32,6 +32,8 @@ const handleChangeDark = () => {
 const area = ref([])
 const selectArea = ref('all')
 
+const type = ref('all')
+
 const data = ref([])
 
 const selectHost = ref('')
@@ -47,17 +49,32 @@ const host = computed(() => {
   if (selectArea.value === 'all') {
     return data.value
   }
+
   return data.value.filter(item => item.Host.Name.slice(0, 2) === selectArea.value)
+})
+
+const hosts = computed(() => {
+  if (type.value === 'all') {
+    return host.value
+  } else if (type.value === 'online') {
+    return host.value.filter(item => item.status)
+  } else {
+    return host.value.filter(item => !item.status)
+  }
 })
 
 const stats = computed(() => {
   const online = host.value.filter(item => item.status)
   let bandwidth_up = 0
   let bandwidth_down = 0
+  let traffic_up = 0
+  let traffic_down = 0
 
   host.value.forEach((item) => {
-    bandwidth_up += item.State.NetInSpeed
-    bandwidth_down += item.State.NetOutSpeed
+    bandwidth_up += item.State.NetOutSpeed
+    bandwidth_down += item.State.NetInSpeed
+    traffic_up += item.State.NetOutTransfer
+    traffic_down += item.State.NetInTransfer
   })
 
   return {
@@ -65,7 +82,9 @@ const stats = computed(() => {
     online: online.length,
     offline: host.value.length - online.length,
     bandwidth_up: bandwidth_up,
-    bandwidth_down: bandwidth_down
+    bandwidth_down: bandwidth_down,
+    traffic_up: traffic_up,
+    traffic_down: traffic_down
   }
 })
 
@@ -105,7 +124,7 @@ const initScoket = async () => {
           }
         }
 
-        if (charts.value[host.Host.Name].cpu.length == 60) {
+        if (charts.value[host.Host.Name].cpu.length == 2) {
           charts.value[host.Host.Name].cpu = charts.value[host.Host.Name].cpu.slice(1)
           charts.value[host.Host.Name].mem = charts.value[host.Host.Name].mem.slice(1)
           charts.value[host.Host.Name].net_in = charts.value[host.Host.Name].net_in.slice(1)
@@ -160,7 +179,7 @@ const progressStatus = (value) => {
   } else if (value < 90) {
     return 'warning';
   } else {
-    return 'error';
+    return 'danger';
   }
 }
 
@@ -207,6 +226,12 @@ const handleClose = () => {
   deleteVisible.value = false
 }
 
+const handleChangeType = (value) => {
+  type.value = value
+}
+
+provide('handleChangeType', handleChangeType)
+
 // 计算剩余天数的函数
 const calculateRemainingDays = (expireTime) => {
   if (!expireTime) return null
@@ -243,9 +268,9 @@ const calculateRemainingDays = (expireTime) => {
         <span :class="`flag-icon flag-icon-${item.replace('UK', 'GB').toLowerCase()}`" style="margin-right: 3px;"></span> {{item}}
       </div>
     </div>
-    <StatsCard :stats="stats" />
+    <StatsCard :type="type" :stats="stats" @handleChangeType="handleChangeType" />
     <div class="monitor-card">
-      <div class="monitor-item" :class="selectHost === item.Host.Name ? 'is-active' : ''" v-for="(item, index) in host" @click="handleSelectHost(item.Host.Name)" :key="index">
+      <div class="monitor-item" :class="selectHost === item.Host.Name ? 'is-active' : ''" v-for="(item, index) in hosts" @click="handleSelectHost(item.Host.Name)" :key="index">
         <div class="name">
           <div class="title">
             <span :class="`flag-icon flag-icon-${item.Host.Name.slice(0, 2).replace('UK', 'GB').toLowerCase()}`"></span>
@@ -269,6 +294,11 @@ const calculateRemainingDays = (expireTime) => {
           <div class="monitor-item-title">内存使用情况</div>
           <div class="monitor-item-value">{{(item.State.MemUsed / item.Host.MemTotal * 100).toFixed(2) + '%'}}</div>
           <a-progress class="monitor-item-progress" :status="progressStatus(item.State.MemUsed / item.Host.MemTotal * 100)" :percent="item.State.MemUsed / item.Host.MemTotal" :show-text="false" style="width: 60px" />
+        </div>
+        <div class="mem">
+          <div class="monitor-item-title">虚拟内存(Swap)</div>
+          <div class="monitor-item-value">{{item.Host.SwapTotal === 0 ? (0).toFixed(2)+'%' : (item.State.SwapUsed / item.Host.SwapTotal * 100).toFixed(2) + '%'}}</div>
+          <a-progress class="monitor-item-progress" :status="progressStatus(item.State.SwapUsed / item.Host.SwapTotal * 100)" :percent="item.Host.SwapTotal === 0 ? (0) : (item.State.SwapUsed / item.Host.SwapTotal)" :show-text="false" style="width: 60px" />
         </div>
         <div class="network">
           <div class="monitor-item-title">网络速度（IN|OUT）</div>
@@ -327,7 +357,7 @@ const calculateRemainingDays = (expireTime) => {
                 </div>
                 <div class="detail-item">
                   <div class="name">虚拟内存(Swap)</div>
-                  <div class="value">{{formatBytes(item.State.SwapUsed)}}</div>
+                  <div class="value">{{formatBytes(item.State.SwapUsed)}} / {{formatBytes(item.Host.SwapTotal)}}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">网络速度（IN|OUT）</div>
@@ -339,7 +369,7 @@ const calculateRemainingDays = (expireTime) => {
                 </div>
                 <div class="detail-item">
                   <div class="name">流量使用↑|↓</div>
-                  <div class="value">{{formatBytes(item.State.NetInTransfer)}} | {{formatBytes(item.State.NetOutTransfer)}}</div>
+                  <div class="value">{{formatBytes(item.State.NetOutTransfer)}} | {{formatBytes(item.State.NetInTransfer)}}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">开机时间</div>
@@ -606,25 +636,19 @@ a {
     .average {
       display: inline-block;
       vertical-align: top;
-      width: 180px;
+      width: 200px;
     }
 
     .network {
       display: inline-block;
       vertical-align: top;
-      width: 180px;
+      width: 200px;
     }
 
     .uptime {
       display: inline-block;
       vertical-align: middle;
-      width: 180px;
-    }
-
-    .expire {
-      display: inline-block;
-      vertical-align: middle;
-      width: 150px;
+      width: 200px;
     }
 
     .detail {

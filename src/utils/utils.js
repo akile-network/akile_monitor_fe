@@ -1,12 +1,22 @@
 // 格式化字节单位
 export const formatBytes = (bytes) => {
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let i = 0;
     while (bytes >= 1024 && i < units.length - 1) {
         bytes /= 1024;
         i++;
     }
     return bytes.toFixed(2) + ' ' + units[i];
+}
+
+export const formatBandwithBytes = (bytes) => {
+    const units = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps', 'Ebps', 'Zbps', 'Ybps'];
+    let i = 0;
+    while (bytes >= 1024 && i < units.length - 1) {
+        bytes /= 1024;
+        i++;
+    }
+    return (bytes*8).toFixed(2) + ' ' + units[i];
 }
 
 // 格式化系统时间为小时:分钟:秒
