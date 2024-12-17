@@ -534,6 +534,19 @@ body {
   font-family: Inter,-apple-system,BlinkMacSystemFont,Roboto,PingFang SC,Noto Sans CJK,WenQuanYi Micro Hei,Microsoft YaHei;
 }
 
+/* 背景图片 */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url(https://www.dmoe.cc/random.php) center/cover no-repeat;
+    filter: blur(0px);
+}
+
 a {
   text-decoration: none;
 }
@@ -602,7 +615,7 @@ a {
     cursor: pointer;
 
     &.is-active {
-      background: #e7e7e730;
+      background: #e7e7e790;
 
       .delete-btn,
       .edit-btn {
@@ -618,7 +631,8 @@ a {
     }
 
     &:hover {
-      background: #e7e7e730;
+      background: #e5e5e5b0;
+      backdrop-filter: blur(10px);
 
       .delete-btn,
       .edit-btn {
@@ -768,7 +782,7 @@ a {
       display: none;
 
       .detail-item-list {
-        margin-bottom: 20px;
+        margin-bottom: 0%;
       }
 
       .detail-item {
