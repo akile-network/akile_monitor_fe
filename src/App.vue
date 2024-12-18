@@ -616,6 +616,7 @@ a {
 
     &.is-active {
       background: #e7e7e790;
+      backdrop-filter: blur(8px);
 
       .delete-btn,
       .edit-btn {
