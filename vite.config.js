@@ -7,8 +7,8 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 const generateConfig = () => ({
-  socket: process.env.SOCKETURL || "ws://192.168.31.64:3000/ws",
-  apiURL: process.env.APIURL || "http://192.168.31.64:3000",
+  socket: process.env.SOCKETURL || "wss://api.status.nianlei.icu",
+  apiURL: process.env.APIURL || "https://api.status.nianlei.icu",
 });
 
 // https://vite.dev/config/
