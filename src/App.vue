@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, provide, ref} from "vue";
+import { computed, onMounted, provide, ref } from "vue";
 import moment from 'moment'
 import CPU from "@/components/CPU.vue";
 import Mem from "@/components/Mem.vue";
@@ -8,7 +8,7 @@ import NetOut from "@/components/NetOut.vue";
 import axios from "axios";
 import { Message } from "@arco-design/web-vue";
 import StatsCard from "@/components/StatsCard.vue";
-import {formatBytes, formatTimeStamp, formatUptime, calculateRemainingDays} from '@/utils/utils'
+import { formatBytes, formatTimeStamp, formatUptime, calculateRemainingDays } from '@/utils/utils'
 
 const socketURL = ref('')
 const apiURL = ref('')
@@ -20,13 +20,13 @@ const handleChangeDark = () => {
   dark.value = !dark.value
 
   if (dark.value) {
-    window.localStorage.setItem('theme','dark')
+    window.localStorage.setItem('theme', 'dark')
     document.body.setAttribute('arco-theme', 'dark')
   } else {
     // 恢复亮色主题
-    window.localStorage.setItem('theme','light')
+    window.localStorage.setItem('theme', 'light')
     document.body.removeAttribute('arco-theme');
-   }
+  }
 }
 
 const area = ref([])
@@ -107,7 +107,7 @@ const initScoket = async () => {
 
   socket = new WebSocket(socketURL.value);  // 替换为实际的 WebSocket 服务器 URL
 
-  socket.onmessage = function(event) {
+  socket.onmessage = function (event) {
     try {
       const message = event.data;
       const res = JSON.parse(message.replace('data: ', ''))
@@ -165,7 +165,7 @@ const sendPing = () => {
   socket.send('ping')
 }
 
-onMounted(async() => {
+onMounted(async () => {
   if (dark.value) {
     document.body.setAttribute('arco-theme', 'dark')
   }
@@ -203,7 +203,7 @@ const authSecret = ref('')
 const deleteHostName = ref('')
 
 const handleShowDelete = (name) => {
-  authSecret.value =  window.localStorage.getItem('auth_secret') || ''
+  authSecret.value = window.localStorage.getItem('auth_secret') || ''
   deleteHostName.value = name
   deleteVisible.value = true
 }
@@ -313,7 +313,9 @@ provide('handleChangeType', handleChangeType)
     <div class="header">
       <a class="logo" href="#">
         <svg class="arco-icon" viewBox="0 0 48 48" fill="currentColor">
-          <path data-v-2ee6cb6b="" fill-rule="evenodd" clip-rule="evenodd" d="M42.919 11.923L25 1.577a2 2 0 00-2 0L5.081 11.923a2 2 0 00-1 1.732v20.69a2 2 0 001 1.732L23 46.423a2 2 0 002 0l17.919-10.346a2 2 0 001-1.732v-20.69a2 2 0 00-1-1.732zM30.556 9.525L38.5 14 24 23l-13.808-8.668L17.5 10l6.5 4 6.556-4.475zM22 40.441V26.286L8 17.358v7.928l8 5.464v6.227l6 3.464zm10-3.464l-6 3.464V26.286l14-8.928v8.928l-8 5.464v5.227z" fill="currentColor"></path>
+          <path data-v-2ee6cb6b="" fill-rule="evenodd" clip-rule="evenodd"
+            d="M42.919 11.923L25 1.577a2 2 0 00-2 0L5.081 11.923a2 2 0 00-1 1.732v20.69a2 2 0 001 1.732L23 46.423a2 2 0 002 0l17.919-10.346a2 2 0 001-1.732v-20.69a2 2 0 00-1-1.732zM30.556 9.525L38.5 14 24 23l-13.808-8.668L17.5 10l6.5 4 6.556-4.475zM22 40.441V26.286L8 17.358v7.928l8 5.464v6.227l6 3.464zm10-3.464l-6 3.464V26.286l14-8.928v8.928l-8 5.464v5.227z"
+            fill="currentColor"></path>
         </svg>
         <span>Akile Monitor</span>
         <small style="font-weight: 400;opacity: .8"> ｜ 全球节点监控</small>
@@ -329,44 +331,52 @@ provide('handleChangeType', handleChangeType)
       <div class="area-tab-item" :class="selectArea === 'all' ? 'is-active' : ''" @click="handleSelectArea('all')">
         全部地区
       </div>
-      <div class="area-tab-item" :class="selectArea === item ? 'is-active' : ''" v-for="(item, index) in area" :key="item" @click="handleSelectArea(item)">
-        <span :class="`flag-icon flag-icon-${item.replace('UK', 'GB').toLowerCase()}`" style="margin-right: 3px;"></span> {{item}}
+      <div class="area-tab-item" :class="selectArea === item ? 'is-active' : ''" v-for="(item, index) in area"
+        :key="item" @click="handleSelectArea(item)">
+        <span :class="`flag-icon flag-icon-${item.replace('UK', 'GB').toLowerCase()}`"
+          style="margin-right: 3px;"></span>
+        {{ item }}
       </div>
     </div>
     <StatsCard :type="type" :stats="stats" @handleChangeType="handleChangeType" />
     <div class="monitor-card">
-      <div class="monitor-item" :class="selectHost === item.Host.Name ? 'is-active' : ''" v-for="(item, index) in hosts" @click="handleSelectHost(item.Host.Name)" :key="index">
+      <div class="monitor-item" :class="selectHost === item.Host.Name ? 'is-active' : ''" v-for="(item, index) in hosts"
+        @click="handleSelectHost(item.Host.Name)" :key="index">
         <div class="name">
           <div class="title">
             <span :class="`flag-icon flag-icon-${item.Host.Name.slice(0, 2).replace('UK', 'GB').toLowerCase()}`"></span>
-            {{item.Host.Name}}
+            {{ item.Host.Name }}
           </div>
           <div class="status" :class="item.status ? 'online' : 'offline'">
-            <span>{{item.status  ? '在线' : '离线'}}</span>
-            <span style="margin-left: 6px;">{{formatUptime(item.State.Uptime)}}</span>
+            <span>{{ item.status ? '在线' : '离线' }}</span>
+            <span style="margin-left: 6px;">{{ formatUptime(item.State.Uptime) }}</span>
           </div>
         </div>
         <div class="platform">
           <div class="monitor-item-title">系统</div>
-          <div class="monitor-item-value">{{item.Host.Platform}} {{item.Host.PlatformVersion}}</div>
+          <div class="monitor-item-value">{{ item.Host.Platform }} {{ item.Host.PlatformVersion }}</div>
         </div>
         <div class="cpu">
           <div class="monitor-item-title">CPU</div>
-          <div class="monitor-item-value">{{item.State.CPU.toFixed(2) + '%'}}</div>
-          <a-progress class="monitor-item-progress" :status="progressStatus(item.State.CPU)" :percent="item.State.CPU/100" :show-text="false" style="width: 60px" />
+          <div class="monitor-item-value">{{ item.State.CPU.toFixed(2) + '%' }}</div>
+          <a-progress class="monitor-item-progress" :status="progressStatus(item.State.CPU)"
+            :percent="item.State.CPU / 100" :show-text="false" style="width: 60px" />
         </div>
         <div class="mem">
           <div class="monitor-item-title">内存使用情况</div>
-          <div class="monitor-item-value">{{(item.State.MemUsed / item.Host.MemTotal * 100).toFixed(2) + '%'}}</div>
-          <a-progress class="monitor-item-progress" :status="progressStatus(item.State.MemUsed / item.Host.MemTotal * 100)" :percent="item.State.MemUsed / item.Host.MemTotal" :show-text="false" style="width: 60px" />
+          <div class="monitor-item-value">{{ (item.State.MemUsed / item.Host.MemTotal * 100).toFixed(2) + '%' }}</div>
+          <a-progress class="monitor-item-progress"
+            :status="progressStatus(item.State.MemUsed / item.Host.MemTotal * 100)"
+            :percent="item.State.MemUsed / item.Host.MemTotal" :show-text="false" style="width: 60px" />
         </div>
         <div class="network">
           <div class="monitor-item-title">网络速度（IN|OUT）</div>
-          <div class="monitor-item-value">{{`${formatBytes(item.State.NetInSpeed)}/s | ${formatBytes(item.State.NetOutSpeed)}/s`}}</div>
+          <div class="monitor-item-value">{{ `${formatBytes(item.State.NetInSpeed)}/s |
+            ${formatBytes(item.State.NetOutSpeed)}/s` }}</div>
         </div>
         <div class="average">
           <div class="monitor-item-title">负载平均值(1|5|15)</div>
-          <div class="monitor-item-value">{{`${item.State.Load1} | ${item.State.Load5} | ${item.State.Load15}`}}</div>
+          <div class="monitor-item-value">{{ `${item.State.Load1} | ${item.State.Load5} | ${item.State.Load15}` }}</div>
         </div>
         <!-- <div class="uptime" style="width: 120px;">
           <div class="monitor-item-title">剩余时间</div>
@@ -374,7 +384,7 @@ provide('handleChangeType', handleChangeType)
         </div> -->
         <div class="uptime">
           <div class="monitor-item-title">上报时间</div>
-          <div class="monitor-item-value">{{formatTimeStamp(item.TimeStamp)}}</div>
+          <div class="monitor-item-value">{{ formatTimeStamp(item.TimeStamp) }}</div>
         </div>
         <div class="detail" v-if="selectHost === item.Host.Name">
           <a-row>
@@ -382,79 +392,86 @@ provide('handleChangeType', handleChangeType)
               <div class="detail-item-list">
                 <div class="detail-item">
                   <div class="name">主机名</div>
-                  <div class="value">{{item.Host.Name}}</div>
+                  <div class="value">{{ item.Host.Name }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">地区</div>
                   <div class="value">
-                    <span :class="`flag-icon flag-icon-${item.Host.Name.slice(0, 2).replace('UK', 'GB').toLowerCase()}`"></span>
-                    {{item.Host.Name.slice(0, 2).toUpperCase()}}
+                    <span
+                      :class="`flag-icon flag-icon-${item.Host.Name.slice(0, 2).replace('UK', 'GB').toLowerCase()}`"></span>
+                    {{ item.Host.Name.slice(0, 2).toUpperCase() }}
                   </div>
                 </div>
                 <div class="detail-item">
                   <div class="name">系统</div>
-                  <div class="value">{{item.Host.Platform}} {{item.Host.PlatformVersion}}</div>
+                  <div class="value">{{ item.Host.Platform }} {{ item.Host.PlatformVersion }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">架构</div>
-                  <div class="value">{{item.Host.Arch}}</div>
+                  <div class="value">{{ item.Host.Arch }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">虚拟化</div>
-                  <div class="value">{{item.Host.Virtualization || '-'}}</div>
+                  <div class="value">{{ item.Host.Virtualization || '-' }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">CPU</div>
-                  <div class="value">{{item.Host.CPU.join(',')}}</div>
+                  <div class="value">{{ item.Host.CPU.join(',') }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">CPU占用</div>
-                  <div class="value">{{item.State.CPU.toFixed(2) + '%'}}</div>
+                  <div class="value">{{ item.State.CPU.toFixed(2) + '%' }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">内存使用情况</div>
-                  <div class="value">{{(item.State.MemUsed / item.Host.MemTotal * 100).toFixed(2) + '%'}} ({{formatBytes(item.State.MemUsed)}} / {{formatBytes(item.Host.MemTotal)}})</div>
+                  <div class="value">{{ (item.State.MemUsed / item.Host.MemTotal * 100).toFixed(2) + '%' }}
+                    ({{ formatBytes(item.State.MemUsed) }} / {{ formatBytes(item.Host.MemTotal) }})</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">虚拟内存(Swap)</div>
-                  <div class="value">{{formatBytes(item.State.SwapUsed)}} / {{formatBytes(item.Host.SwapTotal)}}</div>
+                  <div class="value">{{ formatBytes(item.State.SwapUsed) }} / {{ formatBytes(item.Host.SwapTotal) }}
+                  </div>
                 </div>
                 <div class="detail-item">
                   <div class="name">网络速度（IN|OUT）</div>
-                  <div class="value">{{`${formatBytes(item.State.NetInSpeed)}/s | ${formatBytes(item.State.NetOutSpeed)}/s`}}</div>
+                  <div class="value">{{ `${formatBytes(item.State.NetInSpeed)}/s |
+                    ${formatBytes(item.State.NetOutSpeed)}/s` }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">负载平均值(1|5|15)</div>
-                  <div class="value">{{`${item.State.Load1} | ${item.State.Load5} | ${item.State.Load15}`}}</div>
+                  <div class="value">{{ `${item.State.Load1} | ${item.State.Load5} | ${item.State.Load15}` }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">流量使用↑|↓</div>
-                  <div class="value">{{formatBytes(item.State.NetOutTransfer)}} | {{formatBytes(item.State.NetInTransfer)}}</div>
+                  <div class="value">{{ formatBytes(item.State.NetOutTransfer) }} |
+                    {{ formatBytes(item.State.NetInTransfer) }}
+                  </div>
                 </div>
                 <div class="detail-item">
                   <div class="name">开机时间</div>
-                  <div class="value">{{formatTimeStamp(item.Host.BootTime)}}</div>
+                  <div class="value">{{ formatTimeStamp(item.Host.BootTime) }}</div>
                 </div>
                 <div class="detail-item">
                   <div class="name">上报时间</div>
-                  <div class="value">{{formatTimeStamp(item.TimeStamp)}}</div>
+                  <div class="value">{{ formatTimeStamp(item.TimeStamp) }}</div>
                 </div>
                 <div class="detail-item" v-if="hostInfo[item.Host.Name] && hostInfo[item.Host.Name].seller">
                   <div class="name">商家名称</div>
-                  <div class="value">{{hostInfo[item.Host.Name].seller}}</div>
+                  <div class="value">{{ hostInfo[item.Host.Name].seller }}</div>
                 </div>
                 <div class="detail-item" v-if="hostInfo[item.Host.Name] && hostInfo[item.Host.Name].price">
                   <div class="name">主机价格</div>
-                  <div class="value">{{hostInfo[item.Host.Name].price}}</div>
+                  <div class="value">{{ hostInfo[item.Host.Name].price }}</div>
                 </div>
                 <div class="detail-item" v-if="hostInfo[item.Host.Name] && hostInfo[item.Host.Name].due_time">
                   <div class="name">到期时间</div>
-                  <div class="value">{{moment(hostInfo[item.Host.Name].due_time).format('YYYY-MM-DD')}}</div>
+                  <div class="value">{{ moment(hostInfo[item.Host.Name].due_time).format('YYYY-MM-DD') }}</div>
                 </div>
                 <div class="detail-item" v-if="hostInfo[item.Host.Name] && hostInfo[item.Host.Name].buy_url">
                   <div class="name">购买链接</div>
                   <div class="value">
-                    <a style="color: #0077ff" :href="hostInfo[item.Host.Name].buy_url" target="_blank" @click.stop="() => {}">{{hostInfo[item.Host.Name].buy_url}}</a>
+                    <a style="color: #0077ff" :href="hostInfo[item.Host.Name].buy_url" target="_blank"
+                      @click.stop="() => { }">{{ hostInfo[item.Host.Name].buy_url }}</a>
                   </div>
                 </div>
               </div>
@@ -465,7 +482,8 @@ provide('handleChangeType', handleChangeType)
                   <CPU ref="cpuRef" style="margin-bottom: 20px;" :data="charts[item.Host.Name].cpu" />
                 </a-col>
                 <a-col :span="12" :xs="24" :sm="24" :md="12" :lg="12" :sl="12">
-                  <Mem ref="memRef" :max="item.Host.MemTotal" style="margin-bottom: 20px;" :data="charts[item.Host.Name].mem" />
+                  <Mem ref="memRef" :max="item.Host.MemTotal" style="margin-bottom: 20px;"
+                    :data="charts[item.Host.Name].mem" />
                 </a-col>
                 <a-col :span="12" :xs="24" :sm="24" :md="12" :lg="12" :sl="12">
                   <NetIn ref="netInRef" :data="charts[item.Host.Name].net_in" />
@@ -490,7 +508,7 @@ provide('handleChangeType', handleChangeType)
         <span>删除主机</span>
         <a-button @click="handleClose">
           <template #icon>
-            <icon-close/>
+            <icon-close />
           </template>
         </a-button>
       </div>
@@ -507,7 +525,7 @@ provide('handleChangeType', handleChangeType)
         <span>编辑主机信息</span>
         <a-button @click="handleEditClose">
           <template #icon>
-            <icon-close/>
+            <icon-close />
           </template>
         </a-button>
       </div>
@@ -522,8 +540,12 @@ provide('handleChangeType', handleChangeType)
         <a-button type="primary" :long="true" @click="handleEditHost">更新信息</a-button>
       </div>
     </a-modal>
-    <div class="footer" style="margin-top: 30px">代码开源在 <a href="https://github.com/akile-network/akile_monitor">GitHub v0.0.2</a></div>
-    <div class="footer" style="margin-bottom: 30px">Copyright © 2023-{{new Date().getFullYear()}} Akile LTD.</div>
+    <div class="footer-container">
+      <div class="footer-box">
+        <div class="footer" style="margin-top: 30px">代码开源在 <a href="https://github.com/akile-network/akile_monitor">GitHub v0.0.2</a></div>
+        <div class="footer" style="margin-bottom: 30px">Copyright © 2023-{{ new Date().getFullYear() }} Akile LTD.</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -531,20 +553,20 @@ provide('handleChangeType', handleChangeType)
 body {
   margin: 0;
   background-color: #fafafa;
-  font-family: Inter,-apple-system,BlinkMacSystemFont,Roboto,PingFang SC,Noto Sans CJK,WenQuanYi Micro Hei,Microsoft YaHei;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, Roboto, PingFang SC, Noto Sans CJK, WenQuanYi Micro Hei, Microsoft YaHei;
 }
 
 /* 背景图片 */
 body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: url(https://api.imlazy.ink/v1/img/) center/cover no-repeat;
-    filter: blur(0px);
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: url(https://api.imlazy.ink/v1/img/) center/cover no-repeat;
+  filter: blur(0px);
 }
 
 a {
@@ -564,9 +586,9 @@ a {
   justify-content: space-between;
 
   .theme-btn {
-    border: 1px solid #eeeeee!important;
-    background-color: #ffffff!important;
-    color: #333333!important;
+    border: 1px solid #eeeeee !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
   }
 }
 
@@ -590,8 +612,8 @@ a {
     }
 
     &.is-active {
-      background: #005fe710;
-      color: #054db4;
+      background: #ffffff60;
+      backdrop-filter: blur(5px);
       border: 1px solid #005fe7;
     }
   }
@@ -620,7 +642,7 @@ a {
 
       .delete-btn,
       .edit-btn {
-        display: none!important;
+        display: none !important;
       }
 
       &>.detail {
@@ -642,15 +664,15 @@ a {
     }
 
     .edit-btn {
-      right: 60px!important;
-      background: rgba(22, 131, 255, 0.13)!important;
+      right: 60px !important;
+      background: rgba(22, 131, 255, 0.13) !important;
 
       &:hover {
-        background: rgba(22, 131, 255, 0.19)!important;
+        background: rgba(22, 131, 255, 0.19) !important;
       }
 
       .arco-icon {
-        color: #1673ff!important;
+        color: #1673ff !important;
       }
     }
 
@@ -719,6 +741,7 @@ a {
       .status {
         display: flex;
         align-items: center;
+
         &::before {
           margin-right: 10px;
           position: relative;
@@ -825,7 +848,7 @@ a {
     margin-right: 5px;
     height: 28px;
     width: 28px;
-    color: rgb(22,93,255)!important;
+    color: rgb(22, 93, 255) !important;
   }
 }
 
@@ -840,6 +863,21 @@ a {
   :deep(.arco-tabs-content) {
     display: none;
   }
+}
+
+.footer-container {
+  text-align: center;
+  /* 水平居中对齐 */
+}
+
+.footer-box {
+  width: 20%;
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  display: inline-block;
+  background: #ffffff;
+  box-shadow: 0 2px 4px 0 rgba(133, 138, 180, 0.14);
 }
 
 .footer {
@@ -863,6 +901,7 @@ a {
 
 .akile-modal-content {
   margin-bottom: 20px;
+
   .tips {
     font-size: 12px;
     color: #333333;
@@ -875,11 +914,12 @@ body[arco-theme='dark'] {
 
   .arco-modal {
     background-color: #0e0e0e;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .header {
     .logo {
+
       span,
       small {
         color: #ffffff;
@@ -887,9 +927,9 @@ body[arco-theme='dark'] {
     }
 
     .theme-btn {
-      border: 1px solid #333333!important;
-      background-color: #000000!important;
-      color: #ffffff!important;
+      border: 1px solid #333333 !important;
+      background-color: #000000 !important;
+      color: #ffffff !important;
     }
   }
 
@@ -925,6 +965,7 @@ body[arco-theme='dark'] {
 
       .detail {
         border-color: #333333AA;
+
         .detail-item-list {
           .detail-item {
             .name {
@@ -948,10 +989,11 @@ body[arco-theme='dark'] {
   .detail {
     .detail-item {
       .name {
-        width: 25%!important;
+        width: 25% !important;
       }
+
       .value {
-        width: 75%!important;
+        width: 75% !important;
       }
     }
   }
