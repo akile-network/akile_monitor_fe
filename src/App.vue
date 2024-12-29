@@ -368,10 +368,10 @@ provide('handleChangeType', handleChangeType)
           <div class="monitor-item-title">负载平均值(1|5|15)</div>
           <div class="monitor-item-value">{{`${item.State.Load1} | ${item.State.Load5} | ${item.State.Load15}`}}</div>
         </div>
-        <div class="uptime" style="width: 120px;">
+        <!-- <div class="uptime" style="width: 120px;">
           <div class="monitor-item-title">剩余时间</div>
           <div class="monitor-item-value">{{hostInfo[item.Host.Name] ? calculateRemainingDays(hostInfo[item.Host.Name].due_time) : '-'}}</div>
-        </div>
+        </div> -->
         <div class="uptime">
           <div class="monitor-item-title">上报时间</div>
           <div class="monitor-item-value">{{formatTimeStamp(item.TimeStamp)}}</div>
@@ -746,7 +746,7 @@ a {
     .platform {
       display: inline-block;
       vertical-align: top;
-      width: 120px;
+      width: 200px;
     }
 
     .cpu {
