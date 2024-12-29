@@ -543,7 +543,7 @@ body::before {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: url(https://www.dmoe.cc/random.php) center/cover no-repeat;
+    background: url(https://api.imlazy.ink/img) center/cover no-repeat;
     filter: blur(0px);
 }
 
