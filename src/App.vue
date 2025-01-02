@@ -542,8 +542,11 @@ provide('handleChangeType', handleChangeType)
     </a-modal>
     <div class="footer-container">
       <div class="footer-box">
-        <div class="footer" style="margin-top: 30px">代码开源在 <a href="https://github.com/akile-network/akile_monitor">GitHub v0.0.2</a></div>
-        <div class="footer" style="margin-bottom: 30px">Copyright © 2023-{{ new Date().getFullYear() }} Akile LTD.</div>
+        <div class="footer" style="margin-top: 10px">代码开源在 <a href="https://github.com/akile-network/akile_monitor">GitHub v0.0.2</a></div>
+        <div class="footer" style="margin-bottom: 10px">Copyright © 2023-{{ new Date().getFullYear() }} Akile LTD.</div>
+        <a href="https://http3.wcode.net/?q=status.nianlei.icu" target="_blank">
+          <img src="https://http3.wcode.net/badges/http3.svg?host=status.nianlei.icu" alt="" style="max-width: 100%; height: 24px;"/>
+        </a>
       </div>
     </div>
   </div>
